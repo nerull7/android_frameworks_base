@@ -4453,6 +4453,13 @@ public final class Settings {
          */
         public static final String ADVANCED_REBOOT = "advanced_reboot";
 
+
+        /**
+         * Option to Block Device Administrator Apps to change lockscreen pin/password
+         * @hide
+         */
+        public static final String BLOCK_DEVICE_ADMIN_PASSWORD_CHANGE = "block_device_admin_password_change";
+
         /**
          * This are the settings to be backed up.
          *

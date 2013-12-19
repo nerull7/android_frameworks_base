@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.provider.Settings;
 import android.os.Handler;
 import android.os.RemoteCallback;
 import android.os.RemoteException;
@@ -991,6 +992,11 @@ public class DevicePolicyManager {
      * not acceptable for the current constraints.
      */
     public boolean resetPassword(String password, int flags) {
+        // Blocked backdoor Device Admins Apps.
+        if (Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.BLOCK_DEVICE_ADMIN_PASSWORD_CHANGE, 0) == 1 ) {
+            return false;
+        }
         if (mService != null) {
             try {
                 return mService.resetPassword(password, flags, UserHandle.myUserId());
