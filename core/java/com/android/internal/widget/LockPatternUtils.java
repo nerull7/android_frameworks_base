@@ -625,14 +625,8 @@ public class LockPatternUtils {
             DevicePolicyManager dpm = getDevicePolicyManager();
             if (password != null) {
                 if (userHandle == UserHandle.USER_OWNER) {
-                    // Sync encryption password if enabled
-                    if(getSyncEncryptionPassword()) {
-                        Log.d(TAG, "Syncing encryption password");
-                        updateEncryptionPassword(password);
-                    }
-                    else {
-                        Log.d(TAG, "Skipping encryption password sync");
-                    }
+                    // Update the encryption password.
+                    updateEncryptionPassword(password);
                 }
 
                 int computedQuality = computePasswordQuality(password);
@@ -1366,21 +1360,4 @@ public class LockPatternUtils {
         setBoolean(LOCKSCREEN_WIDGETS_ENABLED, enabled, userId);
     }
 
-    /**
-     * @hide
-     * Set the lock-sync-encryption-password option (whether to sync encryption
-     * password with lock screen token).
-     */
-    public void setSyncEncryptionPassword(boolean enabled) {
-        setBoolean(Settings.Secure.LOCK_SYNC_ENCRYPTION_PASSWORD, enabled);
-    }
-
-    /**
-     * @hide
-     * Get the lock-sync-encryption-password option (whether to sync encryption
-     * password with lock screen token).
-     */
-    public boolean getSyncEncryptionPassword() {
-       return getBoolean(Settings.Secure.LOCK_SYNC_ENCRYPTION_PASSWORD, false);
-    }
 }
