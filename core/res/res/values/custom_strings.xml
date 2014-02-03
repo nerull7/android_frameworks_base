@@ -7,6 +7,8 @@
     <!-- Label for item that reboots the device in phone options dialog -->
     <string name="global_action_reboot">Reboot</string>
 
+    <!-- label for item that takes screenrecord in the phone options dialog -->
+    <string name="global_action_screenrecord">Screen Record</string>
 
     <!-- Button to reboot the phone, within the Phone Options dialog -->
     <string name="reboot_system" product="tablet">Reboot tablet</string>
