@@ -1023,7 +1023,7 @@ public class WifiManager {
      */
     public boolean setWifiEnabled(boolean enabled) {
         try {
-            return mService.setWifiEnabledWithPkg(mContext.getBasePackageName(), enabled);
+            return mService.setWifiEnabled(mContext.getBasePackageName(), enabled);
         } catch (RemoteException e) {
             return false;
         }
