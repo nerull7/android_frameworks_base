@@ -108,6 +108,8 @@ public class AppOpsService extends IAppOpsService.Stub {
         public long time;
         public long rejectTime;
         public int nesting;
+        public int allowedCount;
+        public int ignoredCount;
 
         public Op(int _uid, String _packageName, int _op) {
             uid = _uid;
@@ -275,7 +277,8 @@ public class AppOpsService extends IAppOpsService.Stub {
             for (int j=0; j<pkgOps.size(); j++) {
                 Op curOp = pkgOps.valueAt(j);
                 resOps.add(new AppOpsManager.OpEntry(curOp.op, curOp.mode, curOp.time,
-                        curOp.rejectTime, curOp.duration));
+                        curOp.rejectTime, curOp.duration,
+                        curOp.allowedCount, curOp.ignoredCount ));
             }
         } else {
             for (int j=0; j<ops.length; j++) {
@@ -285,7 +288,8 @@ public class AppOpsService extends IAppOpsService.Stub {
                         resOps = new ArrayList<AppOpsManager.OpEntry>();
                     }
                     resOps.add(new AppOpsManager.OpEntry(curOp.op, curOp.mode, curOp.time,
-                            curOp.rejectTime, curOp.duration));
+                            curOp.rejectTime, curOp.duration,
+                            curOp.allowedCount, curOp.ignoredCount));
                 }
             }
         }
@@ -588,12 +592,14 @@ public class AppOpsService extends IAppOpsService.Stub {
                 if (DEBUG) Log.d(TAG, "noteOperation: reject #" + op.mode + " for code "
                         + switchCode + " (" + code + ") uid " + uid + " package " + packageName);
                 op.rejectTime = System.currentTimeMillis();
+                op.ignoredCount++;
                 return switchOp.mode;
             }
             if (DEBUG) Log.d(TAG, "noteOperation: allowing code " + code + " uid " + uid
                     + " package " + packageName);
             op.time = System.currentTimeMillis();
             op.rejectTime = 0;
+            op.allowedCount++;
             return AppOpsManager.MODE_ALLOWED;
         }
     }
@@ -617,6 +623,7 @@ public class AppOpsService extends IAppOpsService.Stub {
                 if (DEBUG) Log.d(TAG, "startOperation: reject #" + op.mode + " for code "
                         + switchCode + " (" + code + ") uid " + uid + " package " + packageName);
                 op.rejectTime = System.currentTimeMillis();
+                op.ignoredCount++;
                 return switchOp.mode;
             }
             if (DEBUG) Log.d(TAG, "startOperation: allowing code " + code + " uid " + uid
@@ -624,6 +631,7 @@ public class AppOpsService extends IAppOpsService.Stub {
             if (op.nesting == 0) {
                 op.time = System.currentTimeMillis();
                 op.rejectTime = 0;
+                op.allowedCount++;
                 op.duration = -1;
             }
             op.nesting++;
@@ -896,6 +904,14 @@ public class AppOpsService extends IAppOpsService.Stub {
                 if (dur != null) {
                     op.duration = Integer.parseInt(dur);
                 }
+                String allowed = parser.getAttributeValue(null, "ac");
+                if (allowed != null) {
+                    op.allowedCount = Integer.parseInt(allowed);
+                }
+                String ignored = parser.getAttributeValue(null, "ic");
+                if (ignored != null) {
+                    op.ignoredCount = Integer.parseInt(ignored);
+                }
                 HashMap<String, Ops> pkgOps = mUidOps.get(uid);
                 if (pkgOps == null) {
                     pkgOps = new HashMap<String, Ops>();
@@ -966,6 +982,14 @@ public class AppOpsService extends IAppOpsService.Stub {
                             int dur = op.getDuration();
                             if (dur != 0) {
                                 out.attribute(null, "d", Integer.toString(dur));
+                            }
+                            int allowed = op.getAllowedCount();
+                            if (allowed != 0) {
+                                out.attribute(null, "ac", Integer.toString(allowed));
+                            }
+                            int ignored = op.getIgnoredCount();
+                            if (ignored != 0) {
+                                out.attribute(null, "ic", Integer.toString(ignored));
                             }
                             out.endTag(null, "op");
                         }
@@ -1082,6 +1106,28 @@ public class AppOpsService extends IAppOpsService.Stub {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void resetCounters() {
+        mContext.enforcePermission(android.Manifest.permission.UPDATE_APP_OPS_STATS,
+                Binder.getCallingPid(), Binder.getCallingUid(), null);
+        synchronized (this) {
+            for (int i=0; i<mUidOps.size(); i++) {
+                HashMap<String, Ops> packages = mUidOps.valueAt(i);
+                for (Map.Entry<String, Ops> ent : packages.entrySet()) {
+                    String packageName = ent.getKey();
+                    Ops pkgOps = ent.getValue();
+                    for (int j=0; j<pkgOps.size(); j++) {
+                        Op curOp = pkgOps.valueAt(j);
+                        curOp.allowedCount = 0;
+                        curOp.ignoredCount = 0;
+                    }
+                }
+            }
+            // ensure the counter reset persists
+            scheduleWriteNowLocked();
         }
     }
 }
