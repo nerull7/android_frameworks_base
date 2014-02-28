@@ -2453,6 +2453,12 @@ public final class Settings {
         public static final String SHOW_CLEAR_RECENTS_BUTTON = "clear_recents_button";
 
         /**
+         *  Quick Setting Pulldown on Phones
+         *  @hide
+         */
+        public static final String QS_QUICK_PULLDOWN = "qs_quick_pulldown";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
