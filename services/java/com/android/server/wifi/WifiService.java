@@ -331,7 +331,7 @@ public final class WifiService extends IWifiManager.Stub {
 
         // If we are already disabled (could be due to airplane mode), avoid changing persist
         // state here
-        if (wifiEnabled) setWifiEnabled(mContext.getBasePackageName(), wifiEnabled);
+        if (wifiEnabled) setWifiEnabledWithPkg(mContext.getBasePackageName(), wifiEnabled);
 
         mWifiWatchdogStateMachine = WifiWatchdogStateMachine.
                makeWifiWatchdogStateMachine(mContext);
@@ -588,7 +588,11 @@ public final class WifiService extends IWifiManager.Stub {
      * @return {@code true} if the enable/disable operation was
      *         started or is already in the queue.
      */
-    public synchronized boolean setWifiEnabled(String callingPackage, boolean enable) {
+    public synchronized boolean setWifiEnabled(boolean enable) {
+        return setWifiEnabledWithPkg("com.google.android.setupwizard", enable);
+    }
+
+    public synchronized boolean setWifiEnabledWithPkg(String callingPackage, boolean enable) {
         enforceChangePermission();
 
         int uid = Binder.getCallingUid();
