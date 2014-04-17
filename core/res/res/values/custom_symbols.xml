@@ -28,6 +28,9 @@
   <java-symbol type="string" name="reboot_system" />
   <java-symbol type="string" name="global_action_screenrecord" />
   <java-symbol type="bool" name="config_enableScreenrecordChord" />
+  
+  <java-symbol type="string" name="global_action_blocked" />
+  <java-symbol type="drawable" name="ic_menu_block" />
 
 <!-- ===============================================================
    Resources added in version 10 of CyanogenMod
