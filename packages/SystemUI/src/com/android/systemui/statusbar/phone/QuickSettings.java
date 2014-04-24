@@ -83,7 +83,7 @@ import java.util.ArrayList;
 class QuickSettings {
     static final boolean DEBUG_GONE_TILES = false;
     private static final String TAG = "QuickSettings";
-    public static final boolean SHOW_IME_TILE = false;
+    public static final boolean SHOW_IME_TILE = true;
 
     public static final boolean LONG_PRESS_TOGGLES = true;
 
