@@ -840,6 +840,28 @@ class QuickSettings {
     }
 
     private void addTemporaryTiles(final ViewGroup parent, final LayoutInflater inflater) {
+        if (SHOW_IME_TILE || DEBUG_GONE_TILES) {
+            // IME
+            final QuickSettingsBasicTile imeTile
+                    = new QuickSettingsBasicTile(mContext);
+            imeTile.setImageResource(R.drawable.ic_qs_ime);
+            imeTile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        collapsePanels();
+                        Intent intent = new Intent(Settings.ACTION_SHOW_INPUT_METHOD_PICKER);
+                        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, 0);
+                        pendingIntent.send();
+                    } catch (Exception e) {}
+                }
+            });
+            mModel.addImeTile(imeTile,
+                    new QuickSettingsModel.BasicRefreshCallback(imeTile)
+                            .setShowWhenEnabled(true));
+            parent.addView(imeTile);
+        }
+
         // Alarm tile
         final QuickSettingsBasicTile alarmTile
                 = new QuickSettingsBasicTile(mContext);
@@ -888,28 +910,6 @@ class QuickSettings {
                 new QuickSettingsModel.BasicRefreshCallback(remoteDisplayTile)
                         .setShowWhenEnabled(true));
         parent.addView(remoteDisplayTile);
-
-        if (SHOW_IME_TILE || DEBUG_GONE_TILES) {
-            // IME
-            final QuickSettingsBasicTile imeTile
-                    = new QuickSettingsBasicTile(mContext);
-            imeTile.setImageResource(R.drawable.ic_qs_ime);
-            imeTile.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        collapsePanels();
-                        Intent intent = new Intent(Settings.ACTION_SHOW_INPUT_METHOD_PICKER);
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, 0);
-                        pendingIntent.send();
-                    } catch (Exception e) {}
-                }
-            });
-            mModel.addImeTile(imeTile,
-                    new QuickSettingsModel.BasicRefreshCallback(imeTile)
-                            .setShowWhenEnabled(true));
-            parent.addView(imeTile);
-        }
 
         // Bug reports
         final QuickSettingsBasicTile bugreportTile
