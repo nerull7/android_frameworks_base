@@ -717,6 +717,8 @@ class QuickSettings {
             final OnCompletionListener stoppedPlaying = new OnCompletionListener(){
                 public void onCompletion(MediaPlayer mp) {
                     Log.d(TAG, "OnCompletionListener() - QuickRecord");
+                    mPlayer.release();
+                    mPlayer = null;
                     mRecordingState = STATE_IDLE;
                     mFile = null;
                     updateRecordAudioTile();
