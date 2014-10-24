@@ -14,6 +14,21 @@
 
 LOCAL_PATH := frameworks/base/data/sounds
 
+$(call inherit-product, frameworks/base/data/sounds/OriginalAudio.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage2.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage3.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage4.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage5.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage6.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage7.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage7alt.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage8.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage9.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage10.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage11.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage12.mk)
+$(call inherit-product, frameworks/base/data/sounds/AudioPackage12_48.mk)
+
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/Alarm_Beep_01.ogg:system/media/audio/alarms/Alarm_Beep_01.ogg \
     $(LOCAL_PATH)/Alarm_Beep_02.ogg:system/media/audio/alarms/Alarm_Beep_02.ogg \
