@@ -557,17 +557,7 @@ public class LockPatternUtils {
             getLockSettings().setLockPattern(patternToString(pattern), userId);
             DevicePolicyManager dpm = getDevicePolicyManager();
             if (pattern != null) {
-                // Update the device encryption password.
-                if (userId == UserHandle.USER_OWNER
-                        && LockPatternUtils.isDeviceEncryptionEnabled()) {
-                    final boolean required = isCredentialRequiredToDecrypt(true);
-                    if (!required) {
-                        clearEncryptionPassword();
-                    } else {
-                        String stringPattern = patternToString(pattern);
-                        updateEncryptionPassword(StorageManager.CRYPT_TYPE_PATTERN, stringPattern);
-                    }
-                }
+                // Don't update the encryption password here - separate them (Omni change)
 
                 setBoolean(PATTERN_EVER_CHOSEN_KEY, true);
                 if (!isFallback) {
@@ -787,22 +777,7 @@ public class LockPatternUtils {
             if (!TextUtils.isEmpty(password)) {
                 getLockSettings().setLockPassword(password, userHandle);
                 int computedQuality = computePasswordQuality(password);
-
-                // Update the device encryption password.
-                if (userHandle == UserHandle.USER_OWNER
-                        && LockPatternUtils.isDeviceEncryptionEnabled()) {
-                    if (!isCredentialRequiredToDecrypt(true)) {
-                        clearEncryptionPassword();
-                    } else {
-                        boolean numeric = computedQuality
-                                == DevicePolicyManager.PASSWORD_QUALITY_NUMERIC;
-                        boolean numericComplex = computedQuality
-                                == DevicePolicyManager.PASSWORD_QUALITY_NUMERIC_COMPLEX;
-                        int type = numeric || numericComplex ? StorageManager.CRYPT_TYPE_PIN
-                                : StorageManager.CRYPT_TYPE_PASSWORD;
-                        updateEncryptionPassword(type, password);
-                    }
-                }
+                // Don't update the encryption password here - separate them (Omni change)
 
                 if (!isFallback) {
                     deleteGallery();
@@ -884,6 +859,39 @@ public class LockPatternUtils {
         } catch (RemoteException re) {
             // Cant do much
             Log.e(TAG, "Unable to save lock password " + re);
+        }
+    }
+
+
+    /**
+    * @hide
+    * Save a device encryption password. Does not do any checking on complexity.
+    * @param password The password to save
+    */
+    public void saveEncryptionPassword(String password) {
+        saveEncryptionPassword(password, getCurrentOrCallingUserId());
+    }
+
+    /**
+    * @hide
+    * Save a device encryption password. Does not do any checking on complexity.
+    * @param password The password to save
+    * @param userHandle The userId of the user to change the password for
+    */
+    public void saveEncryptionPassword(String password, int userHandle) {
+        if (password != null) {
+            if (userHandle == UserHandle.USER_OWNER) {
+                // Check if Encryption Password is numeric
+                boolean isNumeric = false;
+                try {
+                    Integer.parseInt(password);
+                    isNumeric = true;
+                } catch (NumberFormatException e) {}
+                int type = isNumeric ? StorageManager.CRYPT_TYPE_PIN
+                                     : StorageManager.CRYPT_TYPE_PASSWORD;
+                // Update the encryption password.
+                updateEncryptionPassword(type, password);
+            }
         }
     }
 
