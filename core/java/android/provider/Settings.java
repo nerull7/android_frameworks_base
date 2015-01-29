@@ -4843,6 +4843,12 @@ public final class Settings {
          */
         public static final String BLOCK_DEVICE_ADMIN_PASSWORD_CHANGE = "block_device_admin_password_change";
 
+       /**
+         * Whether to include options in power menu for rebooting into recovery and bootloader
+         * @hide
+         */
+        public static final String ADVANCED_REBOOT = "advanced_reboot";
+
         /**
          * This are the settings to be backed up.
          *
