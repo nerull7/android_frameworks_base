@@ -469,7 +469,7 @@ public abstract class ContentProvider implements ComponentCallbacks2 {
         }
 
         private int enforceDeletePermission(String callingPkg, Uri uri) throws SecurityException {
-            enforceWritePermissionInner(uri);
+            enforceWritePermission(callingPkg, uri, null);
             if (mWriteOp != AppOpsManager.OP_NONE) {
                 int op = mWriteOp;
                 switch (mWriteOp) {
